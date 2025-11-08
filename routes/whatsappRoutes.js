@@ -9,11 +9,15 @@ router.get("/", (req, res) => {
   const token = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
 
-  if (mode && token === verifyToken) {
-    console.log("✅ Webhook verificado com sucesso!");
-    return res.status(200).send(challenge);
+  if (mode && token) {
+    if (mode === "subscribe" && token === verifyToken) {
+      console.log("✅ Webhook verificado com sucesso!");
+      return res.status(200).send(challenge);
+    } else {
+      return res.sendStatus(403);
+    }
   }
-  res.sendStatus(403);
+  res.sendStatus(400);
 });
 
 // 🔹 Receber mensagens e responder automaticamente
