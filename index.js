@@ -1,32 +1,36 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-const cors = require("cors");
-
-const barberRoutes = require("./routes/barberRoutes");
-const whatsappRoutes = require("./routes/whatsappRoutes"); // <-- aqui está certo
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import cors from "cors";
+import bodyParser from "body-parser";
+import whatsappRoutes from "./routes/whatsappRoutes.js"; // ✅ nome correto
 
 dotenv.config();
 
-const app = express(); // <-- precisa vir antes de usar app.use()
+const app = express();
+const PORT = process.env.PORT || 4000;
 
-// Middlewares
+// Middleware
 app.use(cors());
+app.use(bodyParser.json());
 app.use(express.json());
 
-// Rotas
-app.use("/api/barbers", barberRoutes);
-app.use("/webhook", whatsappRoutes); // <-- agora está seguro
+// Rota principal
+app.get("/", (req, res) => {
+  res.send("🚀 BarberConnect API rodando com sucesso!");
+});
 
-// Porta e conexão com o banco
-const PORT = process.env.PORT || 4000;
-const MONGO_URI = process.env.MONGO_URI;
+// Rotas do WhatsApp
+app.use("/", whatsappRoutes);
 
+// Conexão com MongoDB
 mongoose
-  .connect(MONGO_URI)
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("✅ Conectado ao MongoDB Atlas"))
-  .catch((err) =>
-    console.error("❌ Erro ao conectar no MongoDB:", err.message)
-  );
+  .catch((err) => console.error("❌ Erro ao conectar ao MongoDB:", err));
 
-app.listen(PORT, () => console.log(`✅ Servidor rodando na porta ${PORT}`));
+// Inicia o servidor
+app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));

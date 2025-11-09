@@ -6,6 +6,8 @@ API simples para agendamento e cadastro de barbeiros.
 
 ### 1️⃣ Instale as dependências
 
+Preferences: Open Settings (JSON)
+
 ```bash
 npm install
 ```
